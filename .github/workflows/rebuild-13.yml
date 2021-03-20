@@ -1,0 +1,21 @@
+name: Rebuild Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Build the Docker image
+        run: docker build -t postgres-ru:13 -f ./Dockerfile-13 . && docker tag postgres-ru:13 frozendevs/postgres-ru:13 
+
+      - name: Login in DockerHub
+        run: docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push image to DockerHub
+        run: docker push frozendevs/postgres-ru:13
